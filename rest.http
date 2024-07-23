@@ -1,0 +1,22 @@
+@protocol=http
+@host=localhost
+@port=8000
+
+######
+GET {{protocol}}://{{host}}:{{port}}/api/ HTTP/1.1
+
+######
+GET {{protocol}}://{{host}}:{{port}}/api/items HTTP/1.1
+
+########
+
+POST {{protocol}}://{{host}}:{{port}}/api/items/ HTTP/1.1
+Content-Type: application/json
+
+{"name": "De Prueba", "description": "Descripción"}
+####
+
+GET http://localhost:3002/api HTTP/1.1
+
+#######
+GET http://localhost:3002/api/volunteer/6090907r HTTP/1.1

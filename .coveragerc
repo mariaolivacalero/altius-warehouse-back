@@ -1,0 +1,9 @@
+[run]
+source = api
+omit = */migrations/*,*/tests/*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __str__
+    pass
