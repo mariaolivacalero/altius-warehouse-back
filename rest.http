@@ -1,16 +1,19 @@
 @protocol=http
 @host=localhost
 @port=8000
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzIxODIxMDY5LCJpYXQiOjE3MjE4MTc0NjksImp0aSI6ImFjMjVkN2Q2NGM4ZTRkNGY4NTEwYjBjNDM2YjFjMmE4IiwidXNlcl9pZCI6MX0.qtmao07qqQHbu1LvOUFsdt_jbfFivw4CbXvuMj9eEp4
 
 ######
 GET {{protocol}}://{{host}}:{{port}}/api/ HTTP/1.1
 
 ######
 GET {{protocol}}://{{host}}:{{port}}/api/items HTTP/1.1
+Authorization: Bearer {{token}}
 
 ########
 
 POST {{protocol}}://{{host}}:{{port}}/api/items/ HTTP/1.1
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {"name": "De Prueba", "description": "Descripción"}
@@ -20,3 +23,28 @@ GET http://localhost:3002/api HTTP/1.1
 
 #######
 GET http://localhost:3002/api/volunteer/6090907r HTTP/1.1
+####
+# LOGIN ================================================
+POST {{protocol}}://{{host}}:{{port}}/auth/login/ HTTP/1.1
+Content-Type: application/json
+
+{"email": "cmarchena@gmail.com", "password": 1234}
+
+####
+
+POST {{protocol}}://{{host}}:{{port}}/auth/register/ HTTP/1.1
+Content-Type: application/json
+
+{"email": "testcmarchena@gmail.com", "password": 1234}
+
+####
+
+GET {{protocol}}://{{host}}:{{port}}/api/items HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzIxODE3MTA0LCJpYXQiOjE3MjE4MTM1MDQsImp0aSI6IjQ2MTkyMzgxMTljZTRmZmY5NWNkYTM1M2JlZGE5NzIzIiwidXNlcl9pZCI6MX0.BVRrkUV6OzYRBBOWh_2kpISsuaJh6vdxoofmtm3Kppc
+
+####
+
+POST {{protocol}}://{{host}}:{{port}}/auth/token/refresh/ HTTP/1.1
+Content-Type: application/json
+
+{"email": "cmarchena@gmail.com", "password": 1234}
