@@ -1,6 +1,6 @@
 [run]
 source = api
-omit = */migrations/*,*/tests/*
+omit = */migrations/*,*/tests/*,*/config/*, manage.py, */__init__.py
 
 [report]
 exclude_lines =

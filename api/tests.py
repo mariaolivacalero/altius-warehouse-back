@@ -24,7 +24,15 @@ class ItemAPITestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Item.objects.count(), 1)
         self.assertEqual(Item.objects.get().name, "Test Item")
-
+    def test_create_item_invalid_data(self):
+        invalid_data = {"name": "", "description": ""}
+        response = self.client.post("/api/items/", invalid_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("name", response.data)
+        self.assertIn("description", response.data)
+        self.assertEqual(response.data["name"][0], "This field may not be blank.")
+        self.assertEqual(response.data["description"][0], "This field may not be blank.")
+    
     def test_get_items(self):
         response = self.client.get("/api/items/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -36,12 +44,16 @@ class ItemAPITestCase(TestCase):
         response = self.client.get("/api/items/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
-
+        
     def test_get_item(self):
         item = Item.objects.create(name="Test Item", description="Test Description")
         response = self.client.get(f"/api/items/{item.id}/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "Test Item")
+
+    def test_item_does_not_exist(self):
+        response = self.client.get(f"/api/items/1000/")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_item(self):
         item = Item.objects.create(name="Test Item", description="Test Description")
@@ -51,6 +63,18 @@ class ItemAPITestCase(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Item.objects.get().name, "Updated Item")
+   
+    def test_update_item_invalid_data(self):
+        item = Item.objects.create(name="Test Item", description="Test Description")
+        invalid_data = {"name": "", "description": ""}
+        response = self.client.put(
+            f"/api/items/{item.id}/", invalid_data, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("name", response.data)
+        self.assertIn("description", response.data)
+        self.assertEqual(response.data["name"][0], "This field may not be blank.")
+        self.assertEqual(response.data["description"][0], "This field may not be blank.")
 
     def test_delete_item(self):
         item = Item.objects.create(name="Test Item", description="Test Description")
