@@ -1,7 +1,7 @@
 @protocol=http
 @host=localhost
 @port=8000
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzIxODIxMDY5LCJpYXQiOjE3MjE4MTc0NjksImp0aSI6ImFjMjVkN2Q2NGM4ZTRkNGY4NTEwYjBjNDM2YjFjMmE4IiwidXNlcl9pZCI6MX0.qtmao07qqQHbu1LvOUFsdt_jbfFivw4CbXvuMj9eEp4
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzIyMzQ2MzU5LCJpYXQiOjE3MjIzNDI3NTksImp0aSI6IjVkZjc2ZTNkNDc1MzQ5NjE5MzFiMWZjY2E1MjIxZDdjIiwidXNlcl9pZCI6MX0.OiD6w6pjcffuQ2ZwJSN45f4xuz-1K-DKlTQxItxLSxQ
 
 ######
 GET {{protocol}}://{{host}}:{{port}}/api/ HTTP/1.1
@@ -16,7 +16,7 @@ POST {{protocol}}://{{host}}:{{port}}/api/items/ HTTP/1.1
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
-{"name": "De Prueba", "description": "Descripción"}
+{"name": "De Prueba 2", "description": "Descripción 2"}
 ####
 
 GET http://localhost:3002/api HTTP/1.1
