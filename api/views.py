@@ -2,9 +2,18 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from drf_yasg.utils import swagger_auto_schema
 from .models import Item
 from .serializers import ItemSerializer
-
+@swagger_auto_schema(
+    method='post',
+    request_body=ItemSerializer,
+    responses={
+        status.HTTP_201_CREATED: ItemSerializer,
+        status.HTTP_400_BAD_REQUEST: 'Bad Request'
+    },
+    operation_description="Create a new item"
+)
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def item_list(request):
