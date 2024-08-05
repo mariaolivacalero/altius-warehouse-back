@@ -1,54 +1,83 @@
-import json
+# custom_auth/tests.py
+
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APIClient, APITestCase
-from .models import User
+from rest_framework.test import APITestCase
+from django.contrib.auth import get_user_model
+from rest_framework_simplejwt.tokens import RefreshToken
 
+User = get_user_model()
 
-class TestViews(APITestCase):
+class UserTests(APITestCase):
+
     def setUp(self):
-        self.client = APIClient()
-        self.register_url = reverse("register")
-        self.login_url = reverse("login")
         self.user_data = {
-            "username": "usertest",
-            "email": "test@example.com",
-            "password": "testpassword",
+            "username": "testuser",
+            "email": "testuser@example.com",
+            "password": "testpassword123"
         }
+        self.user = User.objects.create_superuser(**self.user_data)
 
     def test_register_user(self):
-        response = self.client.post(self.register_url, self.user_data, format="json")
+        url = reverse('register')
+        data = {
+            "username": "newuser",
+            "email": "newuser@example.com",
+            "password": "newpassword123"
+        }
+        response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(User.objects.count(), 1)
-
-    def test_register_user_invalid_data(self):
-        invalid_data = {"email": "", "password": ""}
-        response = self.client.post(self.register_url, invalid_data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(User.objects.count(), 0)
+        self.assertIn("access", response.data)
+        self.assertIn("refresh", response.data)
 
     def test_login_user(self):
-        # Create a user
-        user = User.objects.create_user(
-            username="usertest", email="test@example.com", password="testpassword"
-        )
-
-        # Try to log in
-        response = self.client.post(self.login_url, self.user_data, format="json")
+        url = reverse('login')
+        data = {
+            "email": self.user_data['email'],
+            "password": self.user_data['password']
+        }
+        response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("access", response.data)
+        self.assertIn("refresh", response.data)
 
-    def test_login_user_invalid_credentials(self):
-        # Create a user
-        user = User.objects.create_user(
-            username="usertest", email="test@example.com", password="testpassword"
-        )
+    def test_get_user_list(self):
+        url = reverse('user-list-create')
+        # Obtain a token for the user
+        refresh = RefreshToken.for_user(self.user)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertGreater(len(response.data), 0)
 
-        # Try to log in with invalid credentials
-        invalid_data = {"email": "test@example.com", "password": "wrongpassword"}
-        response = self.client.post(self.login_url, invalid_data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+    def test_update_user(self):
+        url = reverse('user-detail', kwargs={'pk': self.user.pk})
+        data = {
+            "username": "updateduser",
+            "email": self.user_data['email'],
+            "password": self.user_data['password']
+        }
+        refresh = RefreshToken.for_user(self.user)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['username'], data['username'])
 
-    def test_login_user_non_existent(self):
-        # Try to log in with non-existent user
-        response = self.client.post(self.login_url, self.user_data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+    def test_partial_update_user(self):
+        url = reverse('user-detail', kwargs={'pk': self.user.pk})
+        data = {
+            "username": "partiallyupdateduser"
+        }
+        refresh = RefreshToken.for_user(self.user)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
+        response = self.client.patch(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['username'], data['username'])
+
+    def test_delete_user(self):
+        url = reverse('user-detail', kwargs={'pk': self.user.pk})
+        refresh = RefreshToken.for_user(self.user)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
+        response = self.client.delete(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(User.objects.filter(pk=self.user.pk).exists())

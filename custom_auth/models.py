@@ -1,3 +1,5 @@
+# custom_auth/models.py
+
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -30,3 +32,15 @@ class User(AbstractUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
+
+    def is_beneficiary(self):
+        return self.groups.filter(name='Beneficiaries').exists()
+
+    def is_food_bank_staff(self):
+        return self.groups.filter(name='Food Bank Staff').exists()
+
+    def is_volunteer(self):
+        return self.groups.filter(name='Volunteers').exists()
+
+    def is_system_administrator(self):
+        return self.groups.filter(name='System Administrators').exists()

@@ -7,6 +7,7 @@ from rest_framework import permissions
 from rest_framework.authentication import SessionAuthentication
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+
 schema_view = get_schema_view(
    openapi.Info(
       title="Your API",
@@ -20,6 +21,7 @@ schema_view = get_schema_view(
    permission_classes=(permissions.AllowAny,),
    authentication_classes=(SessionAuthentication, JWTAuthentication),
 #    security=[{"Bearer": []}],  # This adds Bearer token to Swagger UI
+
 )
 
 urlpatterns = [
