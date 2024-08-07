@@ -1,17 +1,18 @@
 from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
-from inventory.models import Product
+from inventory.models import Category, Product
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
 
-class InventoryViewSetTest(TestCase):
+class ProductTest(TestCase):
 
     def setUp(self):
         self.client = APIClient()
+        
         self.user_data = {
             "username": "testuser",
             "password": "testpassword123"
@@ -20,23 +21,32 @@ class InventoryViewSetTest(TestCase):
         refresh = RefreshToken.for_user(self.user)
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
         
+        self.category_data = {
+            "name": "Test Category"
+        }
+        self.category = Category.objects.create(**self.category_data)
         # Create a product to use in tests
         self.product_data = {
             "name": "Test Product",
             "ean": "8123456654321",
             "description": "description",
-            "category": "category",
+            "category": self.category,
             "unit_of_measure": "kilogram"
         }
         self.product = Product.objects.create(**self.product_data)
 
     def test_create_product(self):
         url = reverse('products')
+        category_data = {
+            "name": "New Test Category"
+        }
+        new_category = Category.objects.create(**category_data)
+        
         new_product_data = {
             "name": "New Product",
             "ean": "8123456654322",
             "description": "New description",
-            "category": "New category",
+            "category": new_category.id,
             "unit_of_measure": "liter"
         }
         response = self.client.post(url, new_product_data, format='json')
@@ -62,11 +72,15 @@ class InventoryViewSetTest(TestCase):
 
     def test_update_product(self):
         url = reverse('product-detail', args=[self.product.id])
+        category_data = {
+            "name": "Updated Test Category"
+        }
+        updated_category = Category.objects.create(**category_data)
         updated_data = {
             "name": "Updated Product",
             "ean": "8123456654321",
             "description": "updated description",
-            "category": "updated category",
+            "category": updated_category.id,
             "unit_of_measure": "kilogram"
         }
         response = self.client.put(url, updated_data, format='json')
