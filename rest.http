@@ -1,7 +1,7 @@
 @protocol=http
 @host=localhost
 @port=8000
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzIyODU2MTAyLCJpYXQiOjE3MjI4NTI1MDIsImp0aSI6ImZlOWJlMTQyMTVkZTQ0MWU5N2ZlMTI3OTE0NTE1N2UxIiwidXNlcl9pZCI6Mn0.qtiBpjsUocEW6sbv7qMQNOQx9Y7lSOGbKGLpw_kkhjY
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzIyOTM3MDY4LCJpYXQiOjE3MjI5MzM0NjgsImp0aSI6IjhkMDg4ZDRlZjVlOTRkMjJhODEzMTkxMDE4NTJkZmEwIiwidXNlcl9pZCI6Mn0.d6BGhU-x47OSQdnqGcpLt02KhERkyAatWqBpFdhf-Yw
 ######
 GET {{protocol}}://{{host}}:{{port}}/api/ HTTP/1.1
 
@@ -39,8 +39,7 @@ Content-Type: application/json
 ####
 
 GET {{protocol}}://{{host}}:{{port}}/api/items HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzIxODE3MTA0LCJpYXQiOjE3MjE4MTM1MDQsImp0aSI6IjQ2MTkyMzgxMTljZTRmZmY5NWNkYTM1M2JlZGE5NzIzIiwidXNlcl9pZCI6MX0.BVRrkUV6OzYRBBOWh_2kpISsuaJh6vdxoofmtm3Kppc
-
+Authorization: Bearer {{token}}
 ####
 
 POST {{protocol}}://{{host}}:{{port}}/auth/token/refresh/ HTTP/1.1
@@ -50,3 +49,27 @@ Content-Type: application/json
 ######
 GET {{protocol}}://{{host}}:{{port}}/auth/users
 Authorization: Bearer {{token}}
+
+
+####
+# ====== PRODUCTS
+GET {{protocol}}://{{host}}:{{port}}/inventory/products
+Authorization: Bearer {{token}}
+
+######
+GET {{protocol}}://{{host}}:{{port}}/inventory/products/1
+Authorization: Bearer {{token}}
+
+######
+
+POST  {{protocol}}://{{host}}:{{port}}/inventory/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "ean": "812341234",
+    "name": "Product 1",
+    "description": "Bread",
+    "category": "Dairy",
+    "unit_of_measure": "kilogram"
+}
