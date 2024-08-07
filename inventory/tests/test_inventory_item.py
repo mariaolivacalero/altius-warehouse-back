@@ -85,6 +85,12 @@ class InventoryItemTest(TestCase):
             created_inventory_item.location.id, new_inventory_item_data["location"]
         )
 
+    def test_create_inventory_item_bad_request(self):
+        url = reverse("inventory-items")
+        new_inventory_item_data = {}
+        response = self.client.post(url, new_inventory_item_data, format="json")
+        self.assertEqual(response.status_code, 400)
+
     def test_get_inventory_item_list(self):
         url = reverse("inventory-items")
         response = self.client.get(url)
@@ -100,9 +106,12 @@ class InventoryItemTest(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["id"], self.inventory_item.id)
-        self.assertEqual(
-            response.data["location"], self.inventory_item.location.id
-        )
+        self.assertEqual(response.data["location"], self.inventory_item.location.id)
+
+    def test_get_single_inventory_itemi_not_found(self):
+        url = reverse("inventory-items-detail", args=["1234"])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
 
     def test_update_inventory_item(self):
         url = reverse("inventory-items-detail", args=[self.inventory_item.id])
@@ -121,6 +130,14 @@ class InventoryItemTest(TestCase):
         updated_inventory_item = InventoryItem.objects.get(id=self.inventory_item.id)
         self.assertEqual(updated_inventory_item.quantity, updated_data["quantity"])
         self.assertEqual(updated_inventory_item.location.id, updated_data["location"])
+
+    def test_update_inventory_item_bad_request(self):
+        url = reverse("inventory-items-detail", args=[self.inventory_item.id])
+        location_data = {"name": "Test Location"}
+        new_location = Location.objects.create(**location_data)
+        updated_data = {}
+        response = self.client.put(url, updated_data, format="json")
+        self.assertEqual(response.status_code, 400)
 
     def test_delete_inventory_item(self):
         url = reverse("inventory-items-detail", args=[self.inventory_item.id])

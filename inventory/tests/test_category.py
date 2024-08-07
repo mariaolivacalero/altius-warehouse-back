@@ -36,6 +36,14 @@ class CategoryTest(TestCase):
         self.assertEqual(Category.objects.count(), 2)
         created_category = Category.objects.get(name=new_category_data['name'])
         self.assertEqual(created_category.name, new_category_data['name'])
+    
+    def test_create_category_bad_request(self):
+        url = reverse('categories')
+        new_category_data = {
+            
+        }
+        response = self.client.post(url, new_category_data, format='json')
+        self.assertEqual(response.status_code, 400)
 
     def test_get_category_list(self):
         url = reverse('categories')
@@ -44,13 +52,18 @@ class CategoryTest(TestCase):
         self.assertEqual(len(response.data), 1)
         self.assertIn('id', response.data[0])
         self.assertIn('name', response.data[0])
-
+        
     def test_get_single_category(self):
         url = reverse('category-detail', args=[self.category.id])
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['id'], self.category.id)
         self.assertEqual(response.data['name'], self.category.name)
+
+    def test_get_single_category_not_found(self):
+        url = reverse('category-detail', args=["1234"])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
 
     def test_update_category(self):
         url = reverse('category-detail', args=[self.category.id])
@@ -61,6 +74,13 @@ class CategoryTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         updated_category = Category.objects.get(id=self.category.id)
         self.assertEqual(updated_category.name, updated_data['name'])
+
+    def test_update_category_bad_request(self):
+        url = reverse('category-detail', args=[self.category.id])
+        updated_data = {
+        }
+        response = self.client.put(url, updated_data, format='json')
+        self.assertEqual(response.status_code, 400)
 
     def test_delete_category(self):
         url = reverse('category-detail', args=[self.category.id])
