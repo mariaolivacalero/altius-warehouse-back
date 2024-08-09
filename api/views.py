@@ -3,6 +3,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
+from django.http import HttpResponse
+
 from .models import Item
 from .serializers import ItemSerializer
 @swagger_auto_schema(
@@ -51,3 +53,9 @@ def item_detail(request, pk):
     elif request.method == 'DELETE':
         item.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+def check_language(request):
+    lang = request.session.get('django_language', 'not set')
+    return HttpResponse(f'Current language: {lang}')

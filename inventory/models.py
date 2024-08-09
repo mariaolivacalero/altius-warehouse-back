@@ -44,3 +44,4 @@ class Supplier(models.Model):
     contact_person = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=20)
     email = models.EmailField()
+    tax_id = models.CharField(max_length=50)
