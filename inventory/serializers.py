@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Location, Supplier,InventoryItem, Product, ReceptionBatch, StockMovement, Category 
+from .models import AdministrativeUnit, Supplier,InventoryItem, Product, ReceptionBatch, StockMovement, Category 
 
 class SupplierSerializer(serializers.ModelSerializer):
     class Meta:
@@ -30,7 +30,7 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = '__all__'
 
-class LocationSerializer(serializers.ModelSerializer):
+class AdministrativeUnitSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Location
+        model = AdministrativeUnit
         fields = '__all__'

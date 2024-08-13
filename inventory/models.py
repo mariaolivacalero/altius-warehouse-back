@@ -1,42 +1,148 @@
 from django.db import models
 from custom_auth.models import User  # Assuming your custom user model is in custom_auth
+from django.db import IntegrityError
+from django.utils.timezone import now
+import hashlib
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.name
+
+
 class Product(models.Model):
-    ean = models.CharField(max_length=13, unique=True)
+    code = models.CharField(max_length=13, null=True, blank=True, unique=True)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
+    manufacturer = models.CharField(max_length=255)
     unit_of_measure = models.CharField(max_length=50)
 
-class Location(models.Model):
+    def generate_code(self):
+        # Get the current date and time in YYYYMMDD-HHMMSS format
+        timestamp = now().strftime("%Y%m%d%H%M%S")
+
+        # Create a name prefix
+        name_prefix = (self.manufacturer[:4].upper()).ljust(4, "X")
+
+        # Create a unique string including the timestamp
+        unique_string = (
+            f"{self.name}-{self.category_id}-{self.manufacturer}-{timestamp}"
+        )
+
+        # Generate a hash and truncate it
+        hash_part = hashlib.sha256(unique_string.encode()).hexdigest()[:6]
+
+        return f"{name_prefix}{hash_part}"
+
+    def save(self, *args, **kwargs):
+        if not self.code:
+            self.code = self.generate_code()
+        # Handle possible IntegrityError in case of duplicate codes
+        while True:
+            try:
+                super().save(*args, **kwargs)
+                break
+            except IntegrityError:
+                # If there's a duplicate, generate a new code and try again
+                self.code = self.generate_code()
+
+    def __str__(self):
+        return self.name
+
+
+class AdministrativeUnit(models.Model):
     name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"{str(self.id)} - {self.name}"
+
 
 class InventoryItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    reception_batch = models.ForeignKey('ReceptionBatch', on_delete=models.CASCADE)  # Changed to CASCADE
+    reception_batch = models.ForeignKey(
+        "ReceptionBatch", on_delete=models.CASCADE
+    )  # Changed to CASCADE
     quantity = models.PositiveIntegerField()
-    location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True)
+    administrative_unit = models.ForeignKey(
+        AdministrativeUnit, on_delete=models.SET_NULL, null=True
+    )
     expiration_date = models.DateField(null=True, blank=True)
     lot_number = models.CharField(max_length=50, blank=True, null=True)
 
+    def __str__(self):
+        return f"{self.product.name} - {self.reception_batch.supplier} - {self.reception_batch.receiving_date}"
+
+    def save(self, *args, **kwargs):
+        user = kwargs.pop("user", None)
+
+        # Check if this is a new instance (i.e., the InventoryItem is being created, not updated)
+        is_new = self.pk is None
+        super().save(*args, **kwargs)  # Save the InventoryItem first
+
+        if is_new:
+            print("new_start")
+            # Get the warehouse location associated with the administrative unit
+            warehouse_location = Location.objects.filter(
+                administrative_unit=self.administrative_unit, type="warehouse"
+            ).first()
+            print(f"Warehouse Location: {warehouse_location}")  # Debugging line
+
+            if warehouse_location:
+                # Create the corresponding StockMovement
+                print("starts creation", user)
+                StockMovement.objects.create(
+                    inventory_item=self,
+                    movement_type="in",
+                    location=warehouse_location,
+                    quantity=self.quantity,
+                    date=now().date(),
+                    reason="Initial Stock",
+                    user=user,  # Or set a specific user if needed
+                    reception_batch=self.reception_batch,
+                )
+            print("nex_end")
+    def add_stock(self, quantity, user=None):
+        self.quantity += quantity
+        self.save()
+        StockMovement.objects.create(
+            inventory_item=self,
+            movement_type="in",
+            location=self.administrative_unit.location_set.filter(type="warehouse").first(),
+            quantity=quantity,
+            date=now().date(),
+            user=user,
+        )
+
+    def remove_stock(self, quantity, user=None):
+        self.quantity -= quantity
+        if self.quantity < 0:
+            raise ValueError("Cannot have negative stock quantity.")
+        self.save()
+        StockMovement.objects.create(
+            inventory_item=self,
+            movement_type="out",
+            location=self.administrative_unit.location_set.filter(type="warehouse").first(),
+            quantity=quantity,
+            date=now().date(),
+            user=user,
+        )
+
+
 class ReceptionBatch(models.Model):
     receiving_date = models.DateField()
-    supplier = models.ForeignKey('Supplier', on_delete=models.CASCADE)  # Changed to CASCADE
+    supplier = models.ForeignKey(
+        "Supplier", on_delete=models.CASCADE
+    )  # Changed to CASCADE
     total_quantity = models.PositiveIntegerField()
     notes = models.TextField(blank=True, null=True)
     receiptID = models.CharField(max_length=50, unique=True)
 
-class StockMovement(models.Model):
-    inventory_item = models.ForeignKey(InventoryItem, on_delete=models.CASCADE)  # Renamed for clarity
-    movement_type = models.CharField(max_length=50, choices=[('in', 'In'), ('out', 'Out'), ('transfer', 'Transfer')])
-    quantity = models.IntegerField()
-    date = models.DateField()
-    reason = models.CharField(max_length=100)
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    reception_batch = models.ForeignKey(ReceptionBatch, on_delete=models.SET_NULL, null=True, blank=True)
+    def __str__(self):
+        return f"{self.supplier} - {self.receiving_date}"
+
 
 class Supplier(models.Model):
     name = models.CharField(max_length=255)
@@ -45,3 +151,37 @@ class Supplier(models.Model):
     phone_number = models.CharField(max_length=20)
     email = models.EmailField()
     tax_id = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+
+
+class Location(models.Model):
+    administrative_unit = models.ForeignKey(
+        AdministrativeUnit, on_delete=models.CASCADE, default=1
+    )
+    type = models.CharField(
+        max_length=50,
+        choices=[("warehouse", "Warehouse"), ("storefront", "Storefront")],
+        default="warehouse",
+    )
+
+    def __str__(self):
+        return f"{str(self.id)} - {self.administrative_unit.name} - {self.type}"
+
+
+class StockMovement(models.Model):
+    inventory_item = models.ForeignKey(InventoryItem, on_delete=models.CASCADE)
+    movement_type = models.CharField(
+        max_length=50, choices=[("in", "In"), ("out", "Out"), ("transfer", "Transfer")]
+    )
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, default=1)
+    quantity = models.IntegerField()
+    date = models.DateField(default=now)  # Use callable `now` for default value
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+   
+
+    def __str__(self):
+        return (
+            f"{self.inventory_item.product.name} - {self.movement_type} - {self.date}"
+        )
