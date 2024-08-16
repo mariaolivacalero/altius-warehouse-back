@@ -64,7 +64,7 @@ class InventoryItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     reception_batch = models.ForeignKey(
         "ReceptionBatch", on_delete=models.CASCADE
-    )  # Changed to CASCADE
+    )
     quantity = models.PositiveIntegerField()
     administrative_unit = models.ForeignKey(
         AdministrativeUnit, on_delete=models.SET_NULL, null=True
@@ -77,59 +77,72 @@ class InventoryItem(models.Model):
 
     def save(self, *args, **kwargs):
         user = kwargs.pop("user", None)
-
-        # Check if this is a new instance (i.e., the InventoryItem is being created, not updated)
         is_new = self.pk is None
-        super().save(*args, **kwargs)  # Save the InventoryItem first
+        super().save(*args, **kwargs)
 
         if is_new:
-            print("new_start")
-            # Get the warehouse location associated with the administrative unit
+            # New InventoryItem logic
             warehouse_location = Location.objects.filter(
                 administrative_unit=self.administrative_unit, type="warehouse"
             ).first()
-            print(f"Warehouse Location: {warehouse_location}")  # Debugging line
 
             if warehouse_location:
-                # Create the corresponding StockMovement
-                print("starts creation", user)
                 StockMovement.objects.create(
                     inventory_item=self,
                     movement_type="in",
                     location=warehouse_location,
                     quantity=self.quantity,
                     date=now().date(),
-                    reason="Initial Stock",
-                    user=user,  # Or set a specific user if needed
-                    reception_batch=self.reception_batch,
+                    user=user,
                 )
-            print("nex_end")
+
     def add_stock(self, quantity, user=None):
         self.quantity += quantity
         self.save()
-        StockMovement.objects.create(
-            inventory_item=self,
-            movement_type="in",
-            location=self.administrative_unit.location_set.filter(type="warehouse").first(),
-            quantity=quantity,
-            date=now().date(),
-            user=user,
-        )
+        warehouse_location = Location.objects.filter(
+            administrative_unit=self.administrative_unit, type="warehouse"
+        ).first()
+        if warehouse_location:
+            StockMovement.objects.create(
+                inventory_item=self,
+                movement_type="in",
+                location=warehouse_location,
+                quantity=quantity,
+                date=now().date(),
+                user=user,
+            )
 
     def remove_stock(self, quantity, user=None):
+        if self.quantity < quantity:
+            raise ValidationError("Cannot remove more stock than available.")
         self.quantity -= quantity
-        if self.quantity < 0:
-            raise ValueError("Cannot have negative stock quantity.")
         self.save()
+        warehouse_location = Location.objects.filter(
+            administrative_unit=self.administrative_unit, type="warehouse"
+        ).first()
+        if warehouse_location:
+            StockMovement.objects.create(
+                inventory_item=self,
+                movement_type="out",
+                location=warehouse_location,
+                quantity=quantity,
+                date=now().date(),
+                user=user,
+            )
+
+    def transfer_stock(self, quantity, target_inventory_item, user=None):
+        if self.quantity < quantity:
+            raise ValidationError("Cannot transfer more stock than available.")
+        self.remove_stock(quantity, user)
+        target_inventory_item.add_stock(quantity, user)
         StockMovement.objects.create(
             inventory_item=self,
-            movement_type="out",
+            movement_type="transfer",
             location=self.administrative_unit.location_set.filter(type="warehouse").first(),
             quantity=quantity,
             date=now().date(),
             user=user,
         )
-
 
 class ReceptionBatch(models.Model):
     receiving_date = models.DateField()

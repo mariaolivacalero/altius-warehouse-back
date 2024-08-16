@@ -1,6 +1,6 @@
 digraph model_graph {
   // Dotfile by Django-Extensions graph_models
-  // Created: 2024-08-08 12:03
+  // Created: 2024-08-14 13:38
   // Cli Options: -a -o myapp_models.dot
 
   fontname = "Roboto"
@@ -557,6 +557,14 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">code</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
     <FONT COLOR="#7B7B7B" FACE="Roboto">description</FONT>
     </TD><TD ALIGN="LEFT">
     <FONT COLOR="#7B7B7B" FACE="Roboto">TextField</FONT>
@@ -565,7 +573,7 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">ean</FONT>
+    <FONT FACE="Roboto">manufacturer</FONT>
     </TD><TD ALIGN="LEFT">
     <FONT FACE="Roboto">CharField</FONT>
     </TD></TR>
@@ -590,11 +598,11 @@ digraph model_graph {
     </TABLE>
     >]
 
-  inventory_models_Location [label=<
+  inventory_models_AdministrativeUnit [label=<
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
     <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    Location
+    AdministrativeUnit
     </B></FONT></TD></TR>
   
   
@@ -633,7 +641,7 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><B>location</B></FONT>
+    <FONT FACE="Roboto"><B>administrative_unit</B></FONT>
     </TD><TD ALIGN="LEFT">
     <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
     </TD></TR>
@@ -740,80 +748,6 @@ digraph model_graph {
     </TABLE>
     >]
 
-  inventory_models_StockMovement [label=<
-    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
-    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
-    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    StockMovement
-    </B></FONT></TD></TR>
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><B>id</B></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><B>inventory_item</B></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>reception_batch</B></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>user</B></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">date</FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto">DateField</FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">movement_type</FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto">CharField</FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">quantity</FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto">IntegerField</FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">reason</FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto">CharField</FONT>
-    </TD></TR>
-  
-  
-    </TABLE>
-    >]
-
   inventory_models_Supplier [label=<
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
@@ -866,6 +800,114 @@ digraph model_graph {
     <FONT FACE="Roboto">phone_number</FONT>
     </TD><TD ALIGN="LEFT">
     <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">tax_id</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  inventory_models_Location [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    Location
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>administrative_unit</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">type</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  inventory_models_StockMovement [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    StockMovement
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>inventory_item</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>location</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>user</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">date</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">DateField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">movement_type</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">quantity</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">IntegerField</FONT>
     </TD></TR>
   
   
@@ -934,20 +976,23 @@ digraph model_graph {
   inventory_models_InventoryItem -> inventory_models_ReceptionBatch
   [label=" reception_batch (inventoryitem)"] [arrowhead=none, arrowtail=dot, dir=both];
 
-  inventory_models_InventoryItem -> inventory_models_Location
-  [label=" location (inventoryitem)"] [arrowhead=none, arrowtail=dot, dir=both];
+  inventory_models_InventoryItem -> inventory_models_AdministrativeUnit
+  [label=" administrative_unit (inventoryitem)"] [arrowhead=none, arrowtail=dot, dir=both];
 
   inventory_models_ReceptionBatch -> inventory_models_Supplier
   [label=" supplier (receptionbatch)"] [arrowhead=none, arrowtail=dot, dir=both];
 
+  inventory_models_Location -> inventory_models_AdministrativeUnit
+  [label=" administrative_unit (location)"] [arrowhead=none, arrowtail=dot, dir=both];
+
   inventory_models_StockMovement -> inventory_models_InventoryItem
   [label=" inventory_item (stockmovement)"] [arrowhead=none, arrowtail=dot, dir=both];
 
+  inventory_models_StockMovement -> inventory_models_Location
+  [label=" location (stockmovement)"] [arrowhead=none, arrowtail=dot, dir=both];
+
   inventory_models_StockMovement -> custom_auth_models_User
   [label=" user (stockmovement)"] [arrowhead=none, arrowtail=dot, dir=both];
-
-  inventory_models_StockMovement -> inventory_models_ReceptionBatch
-  [label=" reception_batch (stockmovement)"] [arrowhead=none, arrowtail=dot, dir=both];
 
 
 }
