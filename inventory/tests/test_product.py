@@ -24,10 +24,11 @@ class ProductTest(TestCase):
 
         self.product_data = {
             "name": "Test Product",
-            "ean": "8123456654321",
+            "code": "8123456654321",
             "description": "Description",
             "category": self.category,
             "unit_of_measure": "kilogram",
+            "manufacturer": "Test Manufacturer"
         }
         self.product = Product.objects.create(**self.product_data)
 
@@ -35,10 +36,11 @@ class ProductTest(TestCase):
         url = reverse("products")
         new_product_data = {
             "name": "New Product",
-            "ean": "8123456654322",
+            "code": "8123456654322",
             "description": "New Description",
             "category": self.category.id,
             "unit_of_measure": "litre",
+            "manufacturer": "new manufacturer"
         }
         response = self.client.post(url, new_product_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -76,10 +78,11 @@ class ProductTest(TestCase):
         url = reverse("product-detail", args=[self.product.id])
         updated_data = {
             "name": "Updated Product",
-            "ean": "8123456654323",
+            "code": "8123456654323",
             "description": "Updated Description",
             "category": self.category.id,
             "unit_of_measure": "meter",
+            "manufacturer": "Updated manufacturer"
         }
         response = self.client.put(url, updated_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)

@@ -1,36 +1,52 @@
 from rest_framework import serializers
-from .models import AdministrativeUnit, Supplier,InventoryItem, Product, ReceptionBatch, StockMovement, Category 
+from .models import (
+    AdministrativeUnit,
+    Party,
+    InventoryItem,
+    Product,
+    Reception,
+    Batch,
+    Category,
+)
+
 
 class SupplierSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Supplier
-        fields = '__all__' 
+        model = Party
+        fields = "__all__"
+
 
 class InventoryItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = InventoryItem
-        fields = '__all__' 
+        fields = "__all__"
 
-class  ProductSerializer(serializers.ModelSerializer):
+
+class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = '__all__' 
+        fields = "__all__"
 
-class ReceptionBatchSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ReceptionBatch
-        fields = '__all__' 
 
-class StockMovementSerializer(serializers.ModelSerializer):
+class ReceptionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = StockMovement
-        fields = '__all__' 
+        model = Reception
+        fields = "__all__"
+
+
+class BatchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Batch
+        fields = "__all__"
+
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = "__all__"
+
 
 class AdministrativeUnitSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdministrativeUnit
-        fields = '__all__'
+        fields = "__all__"

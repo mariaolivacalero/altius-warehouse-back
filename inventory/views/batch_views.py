@@ -1,31 +1,31 @@
-# inventory/views/reception_batch_views.py
+# inventory/views/batch_views.py
 
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
-from inventory.models import ReceptionBatch
-from inventory.serializers import ReceptionBatchSerializer
+from inventory.models import Batch
+from inventory.serializers import BatchSerializer
 
 @swagger_auto_schema(
     method='post',
-    request_body=ReceptionBatchSerializer,
+    request_body=BatchSerializer,
     responses={
-        status.HTTP_201_CREATED: ReceptionBatchSerializer,
+        status.HTTP_201_CREATED: BatchSerializer,
         status.HTTP_400_BAD_REQUEST: 'Bad Request'
     },
-    operation_description="Create a new reception batch"
+    operation_description="Create a new batch"
 )
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
-def reception_batch_list(request):
+def batch_list(request):
     if request.method == 'GET':
-        reception_batches = ReceptionBatch.objects.all()
-        serializer = ReceptionBatchSerializer(reception_batches, many=True)
+        reception_batches = Batch.objects.all()
+        serializer = BatchSerializer(reception_batches, many=True)
         return Response(serializer.data)
     elif request.method == 'POST':
-        serializer = ReceptionBatchSerializer(data=request.data)
+        serializer = BatchSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -33,17 +33,17 @@ def reception_batch_list(request):
 
 @api_view(['GET', 'PUT', 'DELETE'])
 @permission_classes([IsAuthenticated])
-def reception_batch_detail(request, pk):
+def batch_detail(request, pk):
     try:
-        reception_batch = ReceptionBatch.objects.get(pk=pk)
-    except ReceptionBatch.DoesNotExist:
+        reception_batch = Batch.objects.get(pk=pk)
+    except Batch.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
-        serializer = ReceptionBatchSerializer(reception_batch)
+        serializer = BatchSerializer(reception_batch)
         return Response(serializer.data)
     elif request.method == 'PUT':
-        serializer = ReceptionBatchSerializer(reception_batch, data=request.data)
+        serializer = BatchSerializer(reception_batch, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

@@ -1,7 +1,9 @@
 from django.db import models
-from custom_auth.models import User  # Assuming your custom user model is in custom_auth
+from custom_auth.models import User
 from django.db import IntegrityError
 from django.utils.timezone import now
+from django.core.exceptions import ValidationError
+
 import hashlib
 
 
@@ -62,18 +64,17 @@ class AdministrativeUnit(models.Model):
 
 class InventoryItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    reception_batch = models.ForeignKey(
-        "ReceptionBatch", on_delete=models.CASCADE
-    )
+    batch = models.ForeignKey("Batch", on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
+    warehouse_quantity = models.PositiveIntegerField()
+    storefront_quantity = models.PositiveIntegerField()
     administrative_unit = models.ForeignKey(
         AdministrativeUnit, on_delete=models.SET_NULL, null=True
     )
     expiration_date = models.DateField(null=True, blank=True)
-    lot_number = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.product.name} - {self.reception_batch.supplier} - {self.reception_batch.receiving_date}"
+        return f"{self.product.name} - {self.batch.party} - {self.batch.receiving_date}"
 
     def save(self, *args, **kwargs):
         user = kwargs.pop("user", None)
@@ -81,15 +82,14 @@ class InventoryItem(models.Model):
         super().save(*args, **kwargs)
 
         if is_new:
-            # New InventoryItem logic
             warehouse_location = Location.objects.filter(
                 administrative_unit=self.administrative_unit, type="warehouse"
             ).first()
 
             if warehouse_location:
-                StockMovement.objects.create(
+                Reception.objects.create(
                     inventory_item=self,
-                    movement_type="in",
+                    batch=self.batch,
                     location=warehouse_location,
                     quantity=self.quantity,
                     date=now().date(),
@@ -98,14 +98,15 @@ class InventoryItem(models.Model):
 
     def add_stock(self, quantity, user=None):
         self.quantity += quantity
+        self.warehouse_quantity += quantity
         self.save()
         warehouse_location = Location.objects.filter(
             administrative_unit=self.administrative_unit, type="warehouse"
         ).first()
         if warehouse_location:
-            StockMovement.objects.create(
+            Reception.objects.create(
                 inventory_item=self,
-                movement_type="in",
+                batch=self.batch,
                 location=warehouse_location,
                 quantity=quantity,
                 date=now().date(),
@@ -116,14 +117,15 @@ class InventoryItem(models.Model):
         if self.quantity < quantity:
             raise ValidationError("Cannot remove more stock than available.")
         self.quantity -= quantity
+        self.warehouse_quantity -= quantity
         self.save()
         warehouse_location = Location.objects.filter(
             administrative_unit=self.administrative_unit, type="warehouse"
         ).first()
         if warehouse_location:
-            StockMovement.objects.create(
+            Dispatch.objects.create(
                 inventory_item=self,
-                movement_type="out",
+                batch=self.batch,
                 location=warehouse_location,
                 quantity=quantity,
                 date=now().date(),
@@ -135,38 +137,48 @@ class InventoryItem(models.Model):
             raise ValidationError("Cannot transfer more stock than available.")
         self.remove_stock(quantity, user)
         target_inventory_item.add_stock(quantity, user)
-        StockMovement.objects.create(
-            inventory_item=self,
-            movement_type="transfer",
-            location=self.administrative_unit.location_set.filter(type="warehouse").first(),
-            quantity=quantity,
-            date=now().date(),
-            user=user,
-        )
+        from_location = self.administrative_unit.location_set.filter(type="warehouse").first()
+        to_location = target_inventory_item.administrative_unit.location_set.filter(type="warehouse").first()
+        if from_location and to_location:
+            StoreStocking.objects.create(
+                inventory_item=self,
+                from_location=from_location,
+                to_location=to_location,
+                location=to_location,
+                quantity=quantity,
+                date=now().date(),
+                user=user,
+            )
 
-class ReceptionBatch(models.Model):
+class Batch(models.Model):  # Renamed from ReceptionBatch
     receiving_date = models.DateField()
-    supplier = models.ForeignKey(
-        "Supplier", on_delete=models.CASCADE
-    )  # Changed to CASCADE
+    party = models.ForeignKey(
+        "Party", on_delete=models.CASCADE
+    )  # Changed from supplier
     total_quantity = models.PositiveIntegerField()
     notes = models.TextField(blank=True, null=True)
     receiptID = models.CharField(max_length=50, unique=True)
+    type = models.CharField(
+        max_length=10, choices=[("reception", "Reception"), ("dispatch", "Dispatch")]
+    )
 
     def __str__(self):
-        return f"{self.supplier} - {self.receiving_date}"
+        return f"{self.party} - {self.receiving_date} - {self.type}"
 
 
-class Supplier(models.Model):
+class Party(models.Model):  # Renamed from Supplier
     name = models.CharField(max_length=255)
     address = models.TextField(default="")
     contact_person = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=20)
     email = models.EmailField()
     tax_id = models.CharField(max_length=50)
+    type = models.CharField(
+        max_length=10, choices=[("supplier", "Supplier"), ("receiver", "Receiver")]
+    )
 
     def __str__(self):
-        return self.name
+        return f"{self.name} - {self.type}"
 
 
 class Location(models.Model):
@@ -183,18 +195,47 @@ class Location(models.Model):
         return f"{str(self.id)} - {self.administrative_unit.name} - {self.type}"
 
 
-class StockMovement(models.Model):
+class BaseStockOperation(models.Model):
     inventory_item = models.ForeignKey(InventoryItem, on_delete=models.CASCADE)
-    movement_type = models.CharField(
-        max_length=50, choices=[("in", "In"), ("out", "Out"), ("transfer", "Transfer")]
-    )
-    location = models.ForeignKey(Location, on_delete=models.CASCADE, default=1)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE)
     quantity = models.IntegerField()
-    date = models.DateField(default=now)  # Use callable `now` for default value
+    date = models.DateField(default=now)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-   
+
+    class Meta:
+        abstract = True
+
+
+class Reception(BaseStockOperation):
+    batch = models.ForeignKey(Batch, on_delete=models.CASCADE)
 
     def __str__(self):
-        return (
-            f"{self.inventory_item.product.name} - {self.movement_type} - {self.date}"
-        )
+        return f"Reception: {self.inventory_item.product.name} - {self.quantity} - {self.date}"
+
+
+class Dispatch(BaseStockOperation):
+    batch = models.ForeignKey(Batch, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Dispatch: {self.inventory_item.product.name} - {self.quantity} - {self.date}"
+
+
+class StoreStocking(BaseStockOperation):
+    from_location = models.ForeignKey(
+        Location, on_delete=models.CASCADE, related_name="stocking_from"
+    )
+    to_location = models.ForeignKey(
+        Location, on_delete=models.CASCADE, related_name="stocking_to"
+    )
+
+    def __str__(self):
+        return f"Store Stocking: {self.inventory_item.product.name} - {self.quantity} - {self.date}"
+
+
+class PickUp(BaseStockOperation):
+    beneficiary = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="pickups"
+    )
+
+    def __str__(self):
+        return f"Pick Up: {self.inventory_item.product.name} - {self.quantity} - {self.date}"

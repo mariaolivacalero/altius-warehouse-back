@@ -11,9 +11,9 @@ from .models import (
     InventoryItem,
     Location,
     Product,
-    ReceptionBatch,
-    StockMovement,
-    Supplier,
+    Batch,
+    Reception,
+    Party,
 )
 
 
@@ -22,9 +22,16 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ("name",)
     search_fields = ("name",)
 
+
 @admin.register(InventoryItem)
 class InventoryItemAdmin(admin.ModelAdmin):
-    list_display = ("product", "quantity", "administrative_unit")
+    list_display = (
+        "product",
+        "quantity",
+        "administrative_unit",
+        "warehouse_quantity",
+        "storefront_quantity",
+    )
     search_fields = ("product",)
     list_filter = ("quantity",)
     actions = ["show_all_items"]
@@ -63,11 +70,11 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ("category",)
 
 
-@admin.register(ReceptionBatch)
+@admin.register(Batch)
 class ReceptionBatchAdmin(admin.ModelAdmin):
     list_display = (
         "receiving_date",
-        "supplier",
+        "party",
         "total_quantity",
         "notes",
         "receiptID",
@@ -76,11 +83,11 @@ class ReceptionBatchAdmin(admin.ModelAdmin):
     list_filter = ("receiving_date",)
 
 
-@admin.register(StockMovement)
+@admin.register(Reception)
 class StockMovementAdmin(admin.ModelAdmin):
     list_display = (
         "inventory_item",
-        "movement_type",
+        # "movement_type",
         "quantity",
         "date",
         "user",
@@ -105,9 +112,7 @@ class StockMovementAdmin(admin.ModelAdmin):
         inventory_item.save()
 
 
-
-
-@admin.register(Supplier)
+@admin.register(Party)
 class SupplierAdmin(admin.ModelAdmin):
     list_display = ("name", "contact_person")
     search_fields = ("name",)

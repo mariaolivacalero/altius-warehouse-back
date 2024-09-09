@@ -12,12 +12,10 @@ from django.utils.translation import gettext_lazy as _
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Your API",
+        title="Fundación Altius",
         default_version="v1",
-        description="Your API description",
-        terms_of_service="https://www.yourapp.com/terms/",
-        contact=openapi.Contact(email="contact@yourapp.com"),
-        license=openapi.License(name="Your License"),
+        description="Mercado Fundación Altius",
+        contact=openapi.Contact(email="tecnicoinformatico@fundacionaltius.org"),
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),

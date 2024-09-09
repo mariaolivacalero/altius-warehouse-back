@@ -1,6 +1,6 @@
 digraph model_graph {
   // Dotfile by Django-Extensions graph_models
-  // Created: 2024-08-14 13:38
+  // Created: 2024-09-09 10:42
   // Cli Options: -a -o myapp_models.dot
 
   fontname = "Roboto"
@@ -506,6 +506,56 @@ digraph model_graph {
 
 
 
+  inventory_models_BaseStockOperation [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    BaseStockOperation
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>inventory_item</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>location</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>user</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">date</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">DateField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">quantity</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">IntegerField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
   inventory_models_Category [label=<
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
@@ -649,7 +699,7 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><B>product</B></FONT>
+    <FONT FACE="Roboto"><B>batch</B></FONT>
     </TD><TD ALIGN="LEFT">
     <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
     </TD></TR>
@@ -657,7 +707,7 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><B>reception_batch</B></FONT>
+    <FONT FACE="Roboto"><B>product</B></FONT>
     </TD><TD ALIGN="LEFT">
     <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
     </TD></TR>
@@ -673,15 +723,23 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">lot_number</FONT>
+    <FONT FACE="Roboto">quantity</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
+    <FONT FACE="Roboto">PositiveIntegerField</FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">quantity</FONT>
+    <FONT FACE="Roboto">storefront_quantity</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">PositiveIntegerField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">warehouse_quantity</FONT>
     </TD><TD ALIGN="LEFT">
     <FONT FACE="Roboto">PositiveIntegerField</FONT>
     </TD></TR>
@@ -690,11 +748,11 @@ digraph model_graph {
     </TABLE>
     >]
 
-  inventory_models_ReceptionBatch [label=<
+  inventory_models_Batch [label=<
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
     <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    ReceptionBatch
+    Batch
     </B></FONT></TD></TR>
   
   
@@ -707,7 +765,7 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><B>supplier</B></FONT>
+    <FONT FACE="Roboto"><B>party</B></FONT>
     </TD><TD ALIGN="LEFT">
     <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
     </TD></TR>
@@ -745,14 +803,22 @@ digraph model_graph {
     </TD></TR>
   
   
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">type</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
     </TABLE>
     >]
 
-  inventory_models_Supplier [label=<
+  inventory_models_Party [label=<
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
     <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    Supplier
+    Party
     </B></FONT></TD></TR>
   
   
@@ -811,6 +877,14 @@ digraph model_graph {
     </TD></TR>
   
   
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">type</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
     </TABLE>
     >]
 
@@ -848,11 +922,11 @@ digraph model_graph {
     </TABLE>
     >]
 
-  inventory_models_StockMovement [label=<
+  inventory_models_Reception [label=<
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
     <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    StockMovement
+    Reception<BR/>&lt;<FONT FACE="Roboto"><I>BaseStockOperation</I></FONT>&gt;
     </B></FONT></TD></TR>
   
   
@@ -865,7 +939,7 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><B>inventory_item</B></FONT>
+    <FONT FACE="Roboto"><B>batch</B></FONT>
     </TD><TD ALIGN="LEFT">
     <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
     </TD></TR>
@@ -873,7 +947,65 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><B>location</B></FONT>
+    <FONT FACE="Roboto"><I><B>inventory_item</B></I></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><I><B>ForeignKey (id)</B></I></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><I><B>location</B></I></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><I><B>ForeignKey (id)</B></I></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><I><B>user</B></I></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><I><B>ForeignKey (id)</B></I></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><I>date</I></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><I>DateField</I></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><I>quantity</I></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><I>IntegerField</I></FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  inventory_models_Dispatch [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    Dispatch<BR/>&lt;<FONT FACE="Roboto"><I>BaseStockOperation</I></FONT>&gt;
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>batch</B></FONT>
     </TD><TD ALIGN="LEFT">
     <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
     </TD></TR>
@@ -881,33 +1013,181 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>user</B></FONT>
+    <FONT FACE="Roboto"><I><B>inventory_item</B></I></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    <FONT FACE="Roboto"><I><B>ForeignKey (id)</B></I></FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">date</FONT>
+    <FONT FACE="Roboto"><I><B>location</B></I></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto">DateField</FONT>
+    <FONT FACE="Roboto"><I><B>ForeignKey (id)</B></I></FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">movement_type</FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><I><B>user</B></I></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto">CharField</FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><I><B>ForeignKey (id)</B></I></FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">quantity</FONT>
+    <FONT FACE="Roboto"><I>date</I></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto">IntegerField</FONT>
+    <FONT FACE="Roboto"><I>DateField</I></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><I>quantity</I></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><I>IntegerField</I></FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  inventory_models_StoreStocking [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    StoreStocking<BR/>&lt;<FONT FACE="Roboto"><I>BaseStockOperation</I></FONT>&gt;
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>from_location</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><I><B>inventory_item</B></I></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><I><B>ForeignKey (id)</B></I></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><I><B>location</B></I></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><I><B>ForeignKey (id)</B></I></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>to_location</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><I><B>user</B></I></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><I><B>ForeignKey (id)</B></I></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><I>date</I></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><I>DateField</I></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><I>quantity</I></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><I>IntegerField</I></FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  inventory_models_PickUp [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    PickUp<BR/>&lt;<FONT FACE="Roboto"><I>BaseStockOperation</I></FONT>&gt;
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>beneficiary</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><I><B>inventory_item</B></I></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><I><B>ForeignKey (id)</B></I></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><I><B>location</B></I></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><I><B>ForeignKey (id)</B></I></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><I><B>user</B></I></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><I><B>ForeignKey (id)</B></I></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><I>date</I></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><I>DateField</I></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><I>quantity</I></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><I>IntegerField</I></FONT>
     </TD></TR>
   
   
@@ -967,32 +1247,95 @@ digraph model_graph {
   [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
 
 
+  inventory_models_BaseStockOperation -> inventory_models_InventoryItem
+  [label=" inventory_item (basestockoperation)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  inventory_models_BaseStockOperation -> inventory_models_Location
+  [label=" location (basestockoperation)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  inventory_models_BaseStockOperation -> custom_auth_models_User
+  [label=" user (basestockoperation)"] [arrowhead=none, arrowtail=dot, dir=both];
+
   inventory_models_Product -> inventory_models_Category
   [label=" category (product)"] [arrowhead=none, arrowtail=dot, dir=both];
 
   inventory_models_InventoryItem -> inventory_models_Product
   [label=" product (inventoryitem)"] [arrowhead=none, arrowtail=dot, dir=both];
 
-  inventory_models_InventoryItem -> inventory_models_ReceptionBatch
-  [label=" reception_batch (inventoryitem)"] [arrowhead=none, arrowtail=dot, dir=both];
+  inventory_models_InventoryItem -> inventory_models_Batch
+  [label=" batch (inventoryitem)"] [arrowhead=none, arrowtail=dot, dir=both];
 
   inventory_models_InventoryItem -> inventory_models_AdministrativeUnit
   [label=" administrative_unit (inventoryitem)"] [arrowhead=none, arrowtail=dot, dir=both];
 
-  inventory_models_ReceptionBatch -> inventory_models_Supplier
-  [label=" supplier (receptionbatch)"] [arrowhead=none, arrowtail=dot, dir=both];
+  inventory_models_Batch -> inventory_models_Party
+  [label=" party (batch)"] [arrowhead=none, arrowtail=dot, dir=both];
 
   inventory_models_Location -> inventory_models_AdministrativeUnit
   [label=" administrative_unit (location)"] [arrowhead=none, arrowtail=dot, dir=both];
 
-  inventory_models_StockMovement -> inventory_models_InventoryItem
-  [label=" inventory_item (stockmovement)"] [arrowhead=none, arrowtail=dot, dir=both];
+  inventory_models_Reception -> inventory_models_InventoryItem
+  [label=" inventory_item (reception)"] [arrowhead=none, arrowtail=dot, dir=both];
 
-  inventory_models_StockMovement -> inventory_models_Location
-  [label=" location (stockmovement)"] [arrowhead=none, arrowtail=dot, dir=both];
+  inventory_models_Reception -> inventory_models_Location
+  [label=" location (reception)"] [arrowhead=none, arrowtail=dot, dir=both];
 
-  inventory_models_StockMovement -> custom_auth_models_User
-  [label=" user (stockmovement)"] [arrowhead=none, arrowtail=dot, dir=both];
+  inventory_models_Reception -> custom_auth_models_User
+  [label=" user (reception)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  inventory_models_Reception -> inventory_models_Batch
+  [label=" batch (reception)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  inventory_models_Reception -> inventory_models_BaseStockOperation
+  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+
+  inventory_models_Dispatch -> inventory_models_InventoryItem
+  [label=" inventory_item (dispatch)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  inventory_models_Dispatch -> inventory_models_Location
+  [label=" location (dispatch)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  inventory_models_Dispatch -> custom_auth_models_User
+  [label=" user (dispatch)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  inventory_models_Dispatch -> inventory_models_Batch
+  [label=" batch (dispatch)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  inventory_models_Dispatch -> inventory_models_BaseStockOperation
+  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+
+  inventory_models_StoreStocking -> inventory_models_InventoryItem
+  [label=" inventory_item (storestocking)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  inventory_models_StoreStocking -> inventory_models_Location
+  [label=" location (storestocking)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  inventory_models_StoreStocking -> custom_auth_models_User
+  [label=" user (storestocking)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  inventory_models_StoreStocking -> inventory_models_Location
+  [label=" from_location (stocking_from)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  inventory_models_StoreStocking -> inventory_models_Location
+  [label=" to_location (stocking_to)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  inventory_models_StoreStocking -> inventory_models_BaseStockOperation
+  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+
+  inventory_models_PickUp -> inventory_models_InventoryItem
+  [label=" inventory_item (pickup)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  inventory_models_PickUp -> inventory_models_Location
+  [label=" location (pickup)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  inventory_models_PickUp -> custom_auth_models_User
+  [label=" user (pickup)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  inventory_models_PickUp -> custom_auth_models_User
+  [label=" beneficiary (pickups)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  inventory_models_PickUp -> inventory_models_BaseStockOperation
+  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
 
 
 }
