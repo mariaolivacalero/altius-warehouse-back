@@ -21,7 +21,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     manufacturer = models.CharField(max_length=255)
     unit_of_measure = models.CharField(max_length=50)
-
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     def generate_code(self):
         # Get the current date and time in YYYYMMDD-HHMMSS format
         timestamp = now().strftime("%Y%m%d%H%M%S")

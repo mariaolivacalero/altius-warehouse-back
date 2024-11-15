@@ -6,6 +6,7 @@ from .views import (
     product_views,
     inventory_item_views,
     administrative_unit_views,
+
 )
 
 urlpatterns = [
@@ -33,4 +34,6 @@ urlpatterns = [
     ),
     path("batches/", batch_views.batch_list, name="batches"),
     path("batches/<int:pk>/", batch_views.batch_detail, name="batch-detail"),
+    path('ean-lookup/', product_views.ean_lookup, name='ean_lookup'),
+
 ]

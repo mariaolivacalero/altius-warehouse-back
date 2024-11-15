@@ -50,3 +50,12 @@ class AdministrativeUnitSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdministrativeUnit
         fields = "__all__"
+
+# EAN lookup
+class EANLookupSerializer(serializers.Serializer):
+    ean = serializers.CharField(max_length=13, min_length=13)
+
+    def validate_ean(self, value):
+        if not value.isdigit():
+            raise serializers.ValidationError("EAN code must contain only numbers")
+        return value

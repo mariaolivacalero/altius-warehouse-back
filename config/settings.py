@@ -174,3 +174,5 @@ SWAGGER_SETTINGS = {
 }
 
 SESSION_ENGINE = "django.contrib.sessions.backends.db"  # Default session engine
+# EAN Search API settings
+EAN_SEARCH_API_TOKEN = '65cae3d96d73b0340317d755ab0cf6628aa748aa'
